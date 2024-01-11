@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module function concat that takes two string arguments (str1 and str2) and returns their concatenation as a string"""
+"""This module provides a function concat that returns concatenation as a string"""
 
 
 def concat(str1: str, str2: str) -> str:
