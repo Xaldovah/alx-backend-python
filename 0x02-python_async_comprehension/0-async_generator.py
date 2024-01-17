@@ -5,9 +5,10 @@ This mod func loops 10 times each time asynchronously waits 1 second
 
 import asyncio
 import random
+from typing import AsyncGenerator
 
 
-async def async_generator():
+async def async_generator() -> AsyncGenerator[float, None]:
     """
     Coroutine that loops 10 times, each time asynchronously waits 1 second,
     then yields a random number between 0 and 10.
