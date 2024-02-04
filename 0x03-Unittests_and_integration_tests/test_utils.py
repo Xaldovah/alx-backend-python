@@ -79,7 +79,7 @@ class TestGetJson(unittest.TestCase):
         # Call the function under test
         result = get_json(test_url)
 
-        # Assert that the mocked get method was called exactly once 
+        # Assert that the mocked get method was called exactly once
         # with test_url
         mock_get.assert_called_once_with(test_url)
 
@@ -107,7 +107,7 @@ class TestMemoize(unittest.TestCase):
             A memoized property that calls the a_method.
             """
             return self.a_method()
-    
+
     @patch('test_utils.TestMemoize.TestClass.a_method')
     def test_memoize(self, mock_a_method):
         """
@@ -115,9 +115,7 @@ class TestMemoize(unittest.TestCase):
         checking the behavior of a_property.
         """
         mock_a_method.return_value = 42
-        
         test_obj = self.TestClass()
-        
         # Access a_property multiple times
         result1 = test_obj.a_property
         result2 = test_obj.a_property
