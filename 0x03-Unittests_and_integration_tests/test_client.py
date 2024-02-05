@@ -78,3 +78,22 @@ class TestGithubOrgClient(unittest.TestCase):
                 "https://api.github.com/orgs/example/repos"
         )
         self.assertEqual(result, expected_result)
+
+        @parameterized.expand([
+            ({"license": {"key": "my_license"}}, "my_license", True),
+            ({"license": {"key": "other_license"}}, "my_license", False),
+        ])
+        def test_has_license(self, repo, license_key, expected_result):
+            """
+            Test GithubOrgClient.has_license.
+
+            This method parametrizes the test with different inputs to
+            test the has_license method with various scenarios.
+            """
+            client = GithubOrgClient("example")
+
+            # Call the has_license method
+            result = client.has_license(repo, license_key)
+
+            # Assert that the result matches the expected value
+            self.assertEqual(result, expected_result)
