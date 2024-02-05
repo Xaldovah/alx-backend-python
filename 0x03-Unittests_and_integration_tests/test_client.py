@@ -2,9 +2,11 @@
 """Module function that inherits from unittest.TestCase"""
 
 import unittest
-from parameterized import parameterized
+import requests
+from parameterized import parameterized, parameterized_class
 from unittest.mock import patch, Mock, PropertyMock
 from client import GithubOrgClient
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -97,3 +99,51 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Assert that the result matches the expected value
         self.assertEqual(result, expected_result)
+
+
+@parameterized_class(
+        ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+        [(TEST_PAYLOAD[0])]
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """
+    Integration test case for the GithubOrgClient class.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up class method to mock requests.get and provide fixtures.
+            - org_payload: Fixture for organization payload.
+            - repos_payload: Fixture for repositories payload.
+            - expected_repos: Fixture for expected repositories.
+            - apache2_repos: Fixture for repositories with Apache2 license.
+        """
+        cls.get_patcher = patch('requests.get')
+
+        # Start the patcher and set side_effect for requests.get(url).json()
+        cls.mock_get = cls.get_patcher.start()
+        cls.mock_get.side_effect = [
+                Mock(json=lambda: cls.org_payload),
+                Mock(json=lambda: cls.repos_payload),
+                Mock(json=lambda: cls.expected_repos),
+                Mock(json=lambda: cls.apache2_repos),
+        ]
+
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Tear down class method to stop the patcher.
+        """
+        cls.get_patcher.stop()
+
+    def test_public_repos_integration(self):
+        """
+        Test the GithubOrgClient.public_repos method in an integration test.
+        """
+        client = GithubOrgClient("Safaricom")
+        # Call the public_repos method
+        result = client.public_repos()
+
+        # Assert that the result matches the expected_repos fixture
+        self.assertEqual(result, self.expected_repos)
