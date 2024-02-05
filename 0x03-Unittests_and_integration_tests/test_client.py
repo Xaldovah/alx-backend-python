@@ -147,3 +147,21 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
         # Assert that the result matches the expected_repos fixture
         self.assertEqual(result, self.expected_repos)
+
+    def test_public_repos(self):
+        """
+        Test the public_repos method without specifying a license
+        """
+        client = GithubOrgClient("Safaricom")
+        with patch('client.get_json', side_effect=[self.org_payload, self.repos_payload, self.expected_repos]):
+            result = client.public_repos()
+        self.assertEqual(result, self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """
+        Test the public_repos method with a specified license
+        """
+        client = GithubOrgClient("Safaricom")
+        with patch('client.get_json', side_effect=[self.org_payload, self.repos_payload, self.apache2_repos]):
+            result = client.public_repos(license="apache-2.0")
+        self.assertEqual(result, self.apache2_repos)
