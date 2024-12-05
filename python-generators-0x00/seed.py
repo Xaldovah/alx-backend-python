@@ -6,8 +6,9 @@ def connect_db():
     """Connects to the MySQL database server."""
     try:
         connection = mysql.connector.connect(
-                host="localhost",
-                user="root"
+		host='localhost',
+		user='root',
+		password='your@password'
         )
         return connection
     except mysql.connector.Error as err:
@@ -30,6 +31,7 @@ def connect_to_prodev():
         connection = mysql.connector.connect(
                 host="localhost",
                 user="root",
+                password="your@password",
                 database="ALX_prodev"
         )
         return connection
