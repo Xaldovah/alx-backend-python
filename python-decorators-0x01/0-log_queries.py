@@ -1,22 +1,21 @@
 import sqlite3
 import functools
-import logging
+from datetime import datetime
 
 #### decorator to lof SQL queries
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 def log_queries():
     """
     A decorator to log SQL queries executed by the decorated function.
     """
     def decorator(func):
-        @functools.wraps(func)
+	@functools.wraps(func)
         def wrapper(*args, **kwargs):
             """Extract the query from the arguments"""
             query = kwargs.get('query') if 'query' in kwargs else args[0] if args else None
             if query:
-                logging.info(f"Executing SQL query: {query}")
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		print(f"{timestamp} - Executing SQL query: {query}")
             return func(*args, **kwargs)
         return wrapper
     return decorator
