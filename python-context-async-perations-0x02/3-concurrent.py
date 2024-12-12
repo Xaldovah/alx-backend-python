@@ -4,7 +4,7 @@ import aiosqlite
 
 async def async_fetch_users(db_name):
     """
-    Fetch all users from the database asynchronously
+    Fetch all users from the database asynchronously.
     :param db_name: Name of the SQLite database.
     :return: List of all users.
     """
@@ -35,8 +35,10 @@ async def fetch_concurrently(db_name):
     all_users_task = async_fetch_users(db_name)
     older_users_task = async_fetch_older_users(db_name, 40)
 
+    # Run both tasks concurrently
     all_users, older_users = await asyncio.gather(all_users_task, older_users_task)
 
+    # Print results
     print("All Users:")
     for user in all_users:
         print(user)
@@ -47,7 +49,6 @@ async def fetch_concurrently(db_name):
 
 
 if __name__ == "__main__":
-    # Database setup
     db_name = "example.db"
 
     async def setup_database():
