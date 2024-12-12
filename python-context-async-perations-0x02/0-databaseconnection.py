@@ -21,7 +21,7 @@ class DatabaseConnection:
         return self.cursor
 
     
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, traceback):
         """
         Exit the runtime context, close the connection, and handle exceptions if needed.
         """
@@ -30,3 +30,21 @@ class DatabaseConnection:
             self.connection.close()
 
         return exc_type is None
+
+
+if __name__ == "__main__":
+    db_name = "example.db"
+    with DatabaseConnection(db_name) as cursor:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+        )
+        """)
+        cursor.execute("INSERT INTO users (name) VALUES ('Alice'), ('Bob'), ('Charlie')")
+
+    with DatabaseConnection(db_name) as cursor:
+        cursor.execute("SELECT * FROM users")
+        results = cursor.fetchall()
+        for row in results:
+            print(row)
