@@ -38,6 +38,7 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertIsInstance(result, dict)
 
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
+
     def test_public_repos_url(self, mock_org):
         """
         Test the GithubOrgClient._public_repos_url property.
@@ -60,7 +61,9 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch('client.get_json', return_value={"repos": [
         {"name": "repo1"}, {"name": "repo2"}]})
-    @patch('client.GithubOrgClient._public_repos_url', new_callable=PropertyMock)
+    @patch('client.GithubOrgClient._public_repos_url',
+            new_callable=PropertyMock)
+
     def test_public_repos(self, mock_public_repos_url, mock_get_json):
         """
         Test GithubOrgClient.public_repos.
@@ -153,7 +156,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Test the public_repos method without specifying a license
         """
         client = GithubOrgClient("Safaricom")
-        with patch('client.get_json', side_effect=[self.org_payload, self.repos_payload, self.expected_repos]):
+        with patch('client.get_json', side_effect=[self.org_payload,
+            self.repos_payload, self.expected_repos]):
             result = client.public_repos()
         self.assertEqual(result, self.expected_repos)
 
@@ -162,6 +166,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Test the public_repos method with a specified license
         """
         client = GithubOrgClient("Safaricom")
-        with patch('client.get_json', side_effect=[self.org_payload, self.repos_payload, self.apache2_repos]):
+        with patch('client.get_json', side_effect=[self.org_payload,
+            self.repos_payload, self.apache2_repos]):
             result = client.public_repos(license="apache-2.0")
         self.assertEqual(result, self.apache2_repos)
