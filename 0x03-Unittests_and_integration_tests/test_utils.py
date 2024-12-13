@@ -36,20 +36,20 @@ class TestAccessNestedMap(unittest.TestCase):
         ])
     def test_access_nested_map_exception(
             self, nested_map, path, expected_exception, expected_message):
-            """
-            Test that accessing nested_map with certain inputs
-            raises a KeyError with the expected message.
+        """
+        Test that accessing nested_map with certain inputs
+        raises a KeyError with the expected message.
 
-            Parameters:
-                - nested_map: A nested map.
-                - path: A sequence of keys representing a path to the value.
-                - expected_exception: The expected exception class.
-                - expected_message: The expected exception message.
-            """
-            with self.assertRaises(expected_exception) as context:
-                access_nested_map(nested_map, path)
+        Parameters:
+        - nested_map: A nested map.
+        - path: A sequence of keys representing a path to the value.
+        - expected_exception: The expected exception class.
+        - expected_message: The expected exception message.
+        """
+        with self.assertRaises(expected_exception) as context:
+            access_nested_map(nested_map, path)
 
-            self.assertEqual(str(context.exception), expected_message)
+        self.assertEqual(str(context.exception), expected_message)
 
 
 class TestGetJson(unittest.TestCase):
