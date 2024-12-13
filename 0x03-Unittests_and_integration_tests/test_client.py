@@ -38,7 +38,6 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertIsInstance(result, dict)
 
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
-
     def test_public_repos_url(self, mock_org):
         """
         Test the GithubOrgClient._public_repos_url property.
@@ -63,7 +62,6 @@ class TestGithubOrgClient(unittest.TestCase):
         {"name": "repo1"}, {"name": "repo2"}]})
     @patch('client.GithubOrgClient._public_repos_url',
             new_callable=PropertyMock)
-
     def test_public_repos(self, mock_public_repos_url, mock_get_json):
         """
         Test GithubOrgClient.public_repos.
@@ -72,8 +70,7 @@ class TestGithubOrgClient(unittest.TestCase):
         of repos is what you expect from the chosen payload. It also tests
         that the mocked property and the mocked get_json were called once.
         """
-        mock_public_repos_url.return_value = (
-                "https://api.github.com/orgs/example/repos")
+        mock_public_repos_url.return_value = ("https://api.github.com/orgs/example/repos")
         mock_get_json.return_value = [{"name": "repo1"}, {"name": "repo2"}]
         client = GithubOrgClient("example")
         result = client.public_repos()
@@ -156,8 +153,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Test the public_repos method without specifying a license
         """
         client = GithubOrgClient("Safaricom")
-        with patch('client.get_json', side_effect=[self.org_payload,
-            self.repos_payload, self.expected_repos]):
+        with patch('client.get_json', side_effect=[self.org_payload, self.repos_payload, self.expected_repos]):
             result = client.public_repos()
         self.assertEqual(result, self.expected_repos)
 
@@ -166,7 +162,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Test the public_repos method with a specified license
         """
         client = GithubOrgClient("Safaricom")
-        with patch('client.get_json', side_effect=[self.org_payload,
-            self.repos_payload, self.apache2_repos]):
+        with patch('client.get_json', side_effect=[self.org_payload, self.repos_payload, self.apache2_repos]):
             result = client.public_repos(license="apache-2.0")
         self.assertEqual(result, self.apache2_repos)
