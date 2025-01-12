@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Custom manager for unread messages
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        """
+        Return unread messages for the specified user.
+        """
+        return self.filter(receiver=user, read=False).only('id', 'sender', 'content', 'timestamp')
+
+
 # Message model
 class Message(models.Model):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
@@ -8,9 +17,26 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    parent_message = models.ForeignKey(
+        'self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE
+    )
+    read = models.BooleanField(default=False)
+
+    objects = models.Manager()  # Default manager
+    unread = UnreadMessagesManager()  # Custom manager for unread messages
 
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver}"
+
+    def get_all_replies(self):
+        """
+        Recursively fetch all replies to this message.
+        """
+        replies = self.replies.all().select_related('sender', 'receiver')
+        all_replies = list(replies)
+        for reply in replies:
+            all_replies.extend(reply.get_all_replies())
+        return all_replies
 
 
 # Notification model
