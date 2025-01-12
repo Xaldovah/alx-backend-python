@@ -17,6 +17,10 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    edited_at = models.DateTimeField(null=True, blank=True)  # Timestamp of last edit
+    edited_by = models.ForeignKey(  # User who made the last edit
+        User, null=True, blank=True, related_name='edited_messages', on_delete=models.SET_NULL
+    )
     parent_message = models.ForeignKey(
         'self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE
     )
@@ -54,7 +58,11 @@ class Notification(models.Model):
 class MessageHistory(models.Model):
     message = models.ForeignKey(Message, related_name='history', on_delete=models.CASCADE)
     old_content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)  # When the edit occurred
+    edited_by = models.ForeignKey(  # Who edited the message
+        User, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return f"History for Message ID {self.message.id}"
+

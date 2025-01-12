@@ -27,3 +27,8 @@ def inbox(request):
     unread_messages = Message.unread.for_user(user)
 
     return render(request, 'inbox.html', {'unread_messages': unread_messages})
+
+def view_message_history(request, message_id):
+    message = Message.objects.get(id=message_id)
+    history = message.history.all().select_related('edited_by')
+    return render(request, 'message_history.html', {'message': message, 'history': history})
