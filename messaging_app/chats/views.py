@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
@@ -13,10 +13,13 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         participants = request.data.get('participants', [])
         if len(participants) < 2:
-            raise serializers.ValidationError("A conversation must have at least two participants.")
+            return Response(
+                {"error": "A conversation must have at least two participants."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         conversation = Conversation.objects.create()
         conversation.participants.set(participants)
-        return Response(ConversationSerializer(conversation).data)
+        return Response(ConversationSerializer(conversation).data, status=status.HTTP_201_CREATED)
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -30,11 +33,14 @@ class MessageViewSet(viewsets.ModelViewSet):
         message_body = request.data.get('message_body')
 
         if not conversation_id or not message_body:
-            raise serializers.ValidationError("Both 'conversation' and 'message_body' fields are required.")
+            return Response(
+                {"error": "Both 'conversation' and 'message_body' fields are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         message = Message.objects.create(
             sender=sender,
             conversation_id=conversation_id,
             message_body=message_body
         )
-        return Response(MessageSerializer(message).data)
+        return Response(MessageSerializer(message).data, status=status.HTTP_201_CREATED)
