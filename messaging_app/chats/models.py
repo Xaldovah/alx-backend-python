@@ -29,6 +29,10 @@ class User(AbstractUser):
         help_text="Specific permissions for this user.",
     )
 
+    def set_password(self, raw_password):
+        """Override to hash password properly using Django utilities."""
+        super().set_password(raw_password)
+
 # Conversation model
 class Conversation(models.Model):
     conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
